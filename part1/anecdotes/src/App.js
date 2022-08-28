@@ -22,11 +22,12 @@ const App = () => {
     const copy =[...points]
     copy[selected] += 1
     setPoints(copy)
-    console.log(points)
+    
   }
 
   function getMaxOfArray(numArray){
     return Math.max.apply(null, numArray)
+    
   }
 
 
