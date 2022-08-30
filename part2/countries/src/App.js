@@ -35,6 +35,20 @@ const App = () => {
 }
 
 const Countries = (props) => {
+  if(props.countries.length > 10){
+    return <div>Too many matches, specify another filter</div>
+  }
+  else if(props.countries.length === 1){
+    return(
+      <div>
+        <h1>{props.countries[0].name.common}</h1>
+        <div>capital {props.countries[0].capital}</div>
+        <div>area {props.countries[0].area}</div>
+        
+        <img src={props.countries[0].flags.png} alt={`${props.countries[0].name.common} flag`} />
+      </div>
+    )
+  }
   return props.countries.map((country) => (<div key={country.name.common}>{country.name.common}</div>))
 }
 
