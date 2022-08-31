@@ -1,20 +1,39 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import axios from 'axios'
 
 const App = () => {
   const [persons, setPersons] = useState([
-    { name: 'Arto Hellas',number: "123456789"}
   ]) 
   const [newName, setNewName] = useState('')
   const [newNum, setNewNum] = useState('')
   const [filter, setNewFilter] = useState('')
   const [filteredPersons, setFilteredPersons] = useState([...persons])
+  const [count, setCount] = useState(0)
 
 
+  useEffect(() => {
+    axios
+    .get('http://localhost:3001/persons')
+    .then(response => {
+      console.log('promise fulfilled')
+      setPersons(response.data)
+      setFilteredPersons(response.data)
+    })
+  }, [count])
 
   const addName = (event) =>{
     event.preventDefault()
     if(persons.some(e => e.name === newName)){
-      alert(`${newName} is already added to phonebook`)
+      const found = persons.find(e => e.name ===newName)
+      if(window.confirm(`${newName} is already added to the phonebook. Do you want to replace the old number with a new one?`)){
+        const edited = {...found}
+        edited.number = newNum
+        axios
+          .put("http://localhost:3001/persons/" + found.id, edited)
+          .then(response => {
+            setCount(count+1)
+          })
+      }
     }
     else{
       const personObject = {
@@ -23,6 +42,11 @@ const App = () => {
       }
       setPersons(persons.concat(personObject))
       setFilteredPersons(persons.concat(personObject))
+      axios
+        .post("http://localhost:3001/persons", personObject)
+        .then(response => {
+          setCount(count+1)
+        })
     }
   }
 
@@ -45,6 +69,17 @@ const App = () => {
     }
   }
 
+  const deletePerson = (props) =>{
+    if (window.confirm("Do you really want to delete this person?")){
+      axios
+      .delete("http://localhost:3001/persons/" + props.person.id)
+      .then(response => {
+        setCount(count+1)
+      })
+    }
+    
+  }
+
   return (
     <div>
       <h2>Phonebook</h2>
@@ -58,7 +93,8 @@ const App = () => {
       </form>
       <h2>Numbers</h2>
       <div>
-        {filteredPersons.map(person => <Person key={person.name} name = {person.name} number={person.number}/>)}
+        {filteredPersons.map(person => <div key={person.name}><Person key={person.name} name = {person.name} number={person.number}/>
+        <button onClick={() => deletePerson({person})}>Delete</button></div>)}
       </div>
     </div>
   )
