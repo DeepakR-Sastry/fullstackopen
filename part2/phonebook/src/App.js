@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react'
 import axios from 'axios'
 
+import './index.css'
+
 const App = () => {
   const [persons, setPersons] = useState([
   ]) 
@@ -9,6 +11,9 @@ const App = () => {
   const [filter, setNewFilter] = useState('')
   const [filteredPersons, setFilteredPersons] = useState([...persons])
   const [count, setCount] = useState(0)
+  const [addedStatus, setAddedStatus] = useState(false)
+  const [deletedStatus, setDeletedStatus] = useState(false)
+
 
 
   useEffect(() => {
@@ -33,6 +38,9 @@ const App = () => {
           .then(response => {
             setCount(count+1)
           })
+          .catch(error => {
+            console.log('operation failed')
+          })
       }
     }
     else{
@@ -46,6 +54,13 @@ const App = () => {
         .post("http://localhost:3001/persons", personObject)
         .then(response => {
           setCount(count+1)
+          setAddedStatus(true)
+          setTimeout(() => {
+            setAddedStatus(false)
+          }, 5000);
+        })
+        .catch(error => {
+          console.log("operation failed")
         })
     }
   }
@@ -75,6 +90,13 @@ const App = () => {
       .delete("http://localhost:3001/persons/" + props.person.id)
       .then(response => {
         setCount(count+1)
+        setDeletedStatus(true)
+        setTimeout(() => {
+          setDeletedStatus(false)          
+        }, 5000);
+      })
+      .catch(response => {
+        console.log("operation failed")
       })
     }
     
@@ -86,7 +108,10 @@ const App = () => {
       <form>
         <div>filter shown with a <input onChange = {handleFilterChange} value = {filter}/></div>
       </form>
+      <AddedPerson status={addedStatus} name={newName}/>
+      <DeletedPerson status={deletedStatus}/>
       <form onSubmit={addName}>
+
           <div>Name: <input onChange = {handleNameChange} value = {newName}/></div>
           <div>Number: <input onChange = {handleNumChange} value = {newNum}/></div>
           <div><button type="submit">add</button></div>
@@ -106,4 +131,19 @@ const Person = (props) =>{
   )
 }
 
+const AddedPerson = (props) =>{
+  if(props.status){
+    return(
+      <div className = "added">Added {props.name}</div>
+    )
+  }
+}
+
+const DeletedPerson = (props) => {
+  if(props.status){
+    return(
+      <div className = "deleted">Deleted person</div>
+    )
+  }
+}
 export default App

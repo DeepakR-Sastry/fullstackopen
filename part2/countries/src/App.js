@@ -44,6 +44,9 @@ const Countries = (props) => {
         <h1>{props.countries[0].name.common}</h1>
         <div>capital {props.countries[0].capital}</div>
         <div>area {props.countries[0].area}</div>
+        <ul>
+          {(Object.values(props.countries[0].languages)).map((language) => (<li key={language}>{language}</li>))}
+        </ul>
         
         <img src={props.countries[0].flags.png} alt={`${props.countries[0].name.common} flag`} />
       </div>
