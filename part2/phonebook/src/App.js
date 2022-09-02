@@ -14,11 +14,11 @@ const App = () => {
   const [addedStatus, setAddedStatus] = useState(false)
   const [deletedStatus, setDeletedStatus] = useState(false)
 
-
+  const baseUrl = "/api/persons/"
 
   useEffect(() => {
     axios
-    .get('http://localhost:3001/persons')
+    .get(baseUrl)
     .then(response => {
       console.log('promise fulfilled')
       setPersons(response.data)
@@ -34,7 +34,7 @@ const App = () => {
         const edited = {...found}
         edited.number = newNum
         axios
-          .put("http://localhost:3001/persons/" + found.id, edited)
+          .put(baseUrl + found.id, edited)
           .then(response => {
             setCount(count+1)
           })
@@ -51,7 +51,7 @@ const App = () => {
       setPersons(persons.concat(personObject))
       setFilteredPersons(persons.concat(personObject))
       axios
-        .post("http://localhost:3001/persons", personObject)
+        .post(baseUrl, personObject)
         .then(response => {
           setCount(count+1)
           setAddedStatus(true)
@@ -75,7 +75,7 @@ const App = () => {
 
   const handleFilterChange = (event) =>{
     setNewFilter(event.target.value)
-    if(event.target.value != ''){
+    if(event.target.value !== ''){
       let copy = persons.filter(person => person.name === event.target.value)
       setFilteredPersons(copy)
     }
@@ -87,7 +87,7 @@ const App = () => {
   const deletePerson = (props) =>{
     if (window.confirm("Do you really want to delete this person?")){
       axios
-      .delete("http://localhost:3001/persons/" + props.person.id)
+      .delete(baseUrl + props.person.id)
       .then(response => {
         setCount(count+1)
         setDeletedStatus(true)
